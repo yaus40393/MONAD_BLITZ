@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MachineChain Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-slate-950 text-slate-100 min-h-screen">
+    <main class="max-w-6xl mx-auto px-6 py-10">
+      <section class="grid lg:grid-cols-2 gap-8 items-start">
+        <div class="space-y-6">
+          <div class="inline-flex items-center gap-2 rounded-full border border-cyan-400/40 bg-cyan-400/10 px-4 py-2 text-cyan-300 text-sm">
+            <span class="h-2 w-2 rounded-full bg-cyan-400"></span>
+            Monad hackathon demo
+          </div>
+          <div>
+            <h1 class="text-4xl lg:text-6xl font-black leading-tight">MachineChain</h1>
+            <p class="mt-4 text-lg text-slate-300 max-w-xl">
+              Parametric industrial insurance triggered by AI. No adjusters. No delays. Automatic payouts on Monad.
+            </p>
+          </div>
+
+          <div class="grid sm:grid-cols-3 gap-4">
+            <div class="rounded-2xl border border-slate-800 bg-slate-900 p-4">
+              <p class="text-slate-400 text-sm">Settlement</p>
+              <p class="text-2xl font-bold text-emerald-400">&lt;10s</p>
+            </div>
+            <div class="rounded-2xl border border-slate-800 bg-slate-900 p-4">
+              <p class="text-slate-400 text-sm">AI confidence</p>
+              <p class="text-2xl font-bold text-cyan-400">94%</p>
+            </div>
+            <div class="rounded-2xl border border-slate-800 bg-slate-900 p-4">
+              <p class="text-slate-400 text-sm">Payout</p>
+              <p class="text-2xl font-bold text-fuchsia-400">$5,000 USDC</p>
+            </div>
+          </div>
+
+          <div class="rounded-3xl border border-slate-800 bg-slate-900 p-6 space-y-4">
+            <h2 class="text-xl font-semibold">Live oracle simulator</h2>
+            <p class="text-slate-400 text-sm">Press start and watch the sensor stream. Reading 10 forces an anomaly and triggers the claim.</p>
+            <div class="flex gap-3 flex-wrap">
+              <button id="startBtn" class="rounded-xl bg-cyan-500 px-5 py-3 font-semibold text-slate-950 hover:bg-cyan-400">Start monitoring</button>
+              <button id="resetBtn" class="rounded-xl border border-slate-700 px-5 py-3 font-semibold hover:bg-slate-800">Reset</button>
+            </div>
+            <div class="grid gap-3 text-sm font-mono" id="log"></div>
+          </div>
+        </div>
+
+        <aside class="rounded-3xl border border-slate-800 bg-slate-900 p-6 space-y-5 sticky top-6">
+          <h2 class="text-xl font-semibold">Contract logic</h2>
+          <div class="space-y-3 text-sm text-slate-300">
+            <div class="rounded-2xl bg-slate-950/70 p-4 border border-slate-800">
+              <p class="text-slate-400 mb-1">Policy active</p>
+              <p class="font-semibold text-emerald-400">Yes</p>
+            </div>
+            <div class="rounded-2xl bg-slate-950/70 p-4 border border-slate-800">
+              <p class="text-slate-400 mb-1">Equipment ID</p>
+              <p class="font-semibold">PRESS_LINE_NL_01</p>
+            </div>
+            <div class="rounded-2xl bg-slate-950/70 p-4 border border-slate-800">
+              <p class="text-slate-400 mb-1">Cooldown</p>
+              <p class="font-semibold">24 hours</p>
+            </div>
+            <div class="rounded-2xl bg-slate-950/70 p-4 border border-slate-800">
+              <p class="text-slate-400 mb-1">Minimum confidence</p>
+              <p class="font-semibold">85%</p>
+            </div>
+          </div>
+
+          <div class="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4">
+            <p class="text-emerald-300 text-sm uppercase tracking-wide">Triggered payout</p>
+            <p class="text-3xl font-black text-white mt-1">0x5815...07b</p>
+            <p class="text-slate-300 text-sm mt-2">Claim released on Monad testnet after anomaly verification.</p>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <script>
+      const log = document.getElementById('log');
+      const startBtn = document.getElementById('startBtn');
+      const resetBtn = document.getElementById('resetBtn');
+      let timer = null;
+      let reading = 0;
+
+      function row(text, tone = 'text-slate-300') {
+        const el = document.createElement('div');
+        el.className = `rounded-xl border border-slate-800 bg-slate-950/80 px-4 py-3 ${tone}`;
+        el.textContent = text;
+        log.prepend(el);
+      }
+
+      function reset() {
+        clearInterval(timer);
+        timer = null;
+        reading = 0;
+        log.innerHTML = '';
+        row('MachineChain Oracle ready.');
+      }
+
+      startBtn.addEventListener('click', () => {
+        if (timer) return;
+        row('Monitoring started on PRESS_LINE_NL_01', 'text-cyan-300');
+        timer = setInterval(() => {
+          reading += 1;
+          const vib = (2.3 + Math.random() * 0.8).toFixed(2);
+          const temp = (61 + Math.random() * 9).toFixed(1);
+          const curr = (11.4 + Math.random() * 1.2).toFixed(1);
+          if (reading === 10) {
+            row('[t=10] SENSOR SPIKE DETECTED', 'text-amber-300');
+            row('FAILURE DETECTED, confidence 99%, sending triggerClaim()', 'text-emerald-300');
+            row('USDC payout released to plant wallet', 'text-fuchsia-300');
+            clearInterval(timer);
+            timer = null;
+            return;
+          }
+          row(`t=${reading} vib=${vib}mm/s temp=${temp}C curr=${curr}A`);
+        }, 800);
+      });
+
+      resetBtn.addEventListener('click', reset);
+      reset();
+    </script>
+  </body>
+</html>
