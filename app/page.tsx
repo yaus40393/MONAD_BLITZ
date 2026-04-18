@@ -36,7 +36,7 @@ export default function Page() {
         const next = prev + 1;
         const current = (11.5 + Math.random() * 1.5).toFixed(2);
         const temperature = (58 + Math.random() * 8).toFixed(1);
-        const status: 'normal' | 'spike' = next === 10 ? 'spike' : 'normal';
+        const status = (next === 10 ? 'spike' : 'normal') as 'normal' | 'spike';
         setReadings((items) => [
           {
             t: next,
