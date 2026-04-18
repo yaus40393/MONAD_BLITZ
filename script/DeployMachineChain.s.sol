@@ -6,13 +6,11 @@ import "../contracts/MachineChain.sol";
 
 contract DeployMachineChain is Script {
     function run() external {
-        vm.startBroadcast();
-
         address stablecoin = vm.envAddress("STABLECOIN_ADDRESS");
         address oracle = vm.envAddress("ORACLE_ADDRESS");
 
+        vm.startBroadcast();
         new MachineChain(stablecoin, oracle);
-
         vm.stopBroadcast();
     }
 }

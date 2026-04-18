@@ -5,9 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MachineChain Demo</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module">
+      import { createPublicClient, createWalletClient, custom, http, getAddress, stringToHex, pad, encodeFunctionData } from 'https://esm.sh/viem@2.28.0';
+
+      const MACHINECHAIN = {
+        address: '0xfdd5f90ac2ee4ab0ad5730a1dd4cb5cce2a91d19',
+        stablecoin: '0x2ea4c1fc8787afC4980582c0878469bA6D41A337',
+        oracle: '0xBdC9C332237c2308a40715bdB4cab65aA3f9f8A6',
+      };
+
+      const monadTestnet = {
+        id: 10143,
+        name: 'Monad Testnet',
+        nativeCurrency: { name: 'MON', symbol: 'MON', decimals: 18 },
+        rpcUrls: { default: { http: ['https://testnet-rpc.monad.xyz/'] } },
+        blockExplorers: { default: { name: 'MonadExplorer', url: 'https://testnet.monadexplorer.com' } },
+        testnet: true,
+      };
+
+      const abi = [
+        { type: 'function', stateMutability: 'view', name: 'owner', inputs: [], outputs: [{ type: 'address' }] },
+        { type: 'function', stateMutability: 'view', name: 'oracle', inputs: [], outputs: [{ type: 'address' }] },
+        { type: 'function', stateMutability: 'view', name: 'stablecoin', inputs: [], outputs: [{ type: 'address' }] },
+        { type: 'function', stateMutability: 'view', name: 'policies', inputs: [{ name: '', type: 'bytes32' }], outputs: [
+          { type: 'address', name: 'plant' },
+          { type: 'uint256', name: 'coverageAmount' },
+          { type: 'uint256', name: 'expiry' },
+          { type: 'bool', name: 'active' },
+          { type: 'uint256', name: 'lastClaim' }
+        ]},
+        { type: 'function', stateMutability: 'nonpayable', name: 'createPolicy', inputs: [
+          { name: 'equipmentId', type: 'bytes32' },
+          { name: 'plant', type: 'address' },
+          { name: 'coverageAmount', type: 'uint256' },
+          { name: 'durationDays', type: 'uint256' }
+        ], outputs: [] },
+        { type: 'function', stateMutability: 'nonpayable', name: 'fundPool', inputs: [{ name: 'amount', type: 'uint256' }], outputs: [] },
+        { type: 'function', stateMutability: 'nonpayable', name: 'triggerClaim', inputs: [
+          { name: 'equipmentId', type: 'bytes32' },
+          { name: 'claimId', type: 'bytes32' },
+          { name: 'confidenceScore', type: 'uint8' },
+          { name: 'failureType', type: 'string' }
+        ], outputs: [] },
+      ];
+
+      window.MACHINECHAIN = MACHINECHAIN;
+      window.monadTestnet = monadTestnet;
+      window.MACHINECHAIN_ABI = abi;
+      window.createPublicClient = createPublicClient;
+      window.createWalletClient = createWalletClient;
+      window.custom = custom;
+      window.http = http;
+      window.getAddress = getAddress;
+      window.stringToHex = stringToHex;
+      window.pad = pad;
+      window.encodeFunctionData = encodeFunctionData;
+    </script>
   </head>
   <body class="bg-slate-950 text-slate-100 min-h-screen">
-    <main class="max-w-6xl mx-auto px-6 py-10">
+    <main class="max-w-7xl mx-auto px-6 py-10 space-y-8">
       <section class="grid lg:grid-cols-2 gap-8 items-start">
         <div class="space-y-6">
           <div class="inline-flex items-center gap-2 rounded-full border border-cyan-400/40 bg-cyan-400/10 px-4 py-2 text-cyan-300 text-sm">
@@ -48,23 +104,23 @@
         </div>
 
         <aside class="rounded-3xl border border-slate-800 bg-slate-900 p-6 space-y-5 sticky top-6">
-          <h2 class="text-xl font-semibold">Contract logic</h2>
+          <h2 class="text-xl font-semibold">On-chain status</h2>
           <div class="space-y-3 text-sm text-slate-300">
             <div class="rounded-2xl bg-slate-950/70 p-4 border border-slate-800">
-              <p class="text-slate-400 mb-1">Policy active</p>
-              <p class="font-semibold text-emerald-400">Yes</p>
+              <p class="text-slate-400 mb-1">Contract</p>
+              <p id="contractAddr" class="font-semibold break-all">0xfdd5f90ac2ee4ab0ad5730a1dd4cb5cce2a91d19</p>
             </div>
             <div class="rounded-2xl bg-slate-950/70 p-4 border border-slate-800">
-              <p class="text-slate-400 mb-1">Equipment ID</p>
-              <p class="font-semibold">PRESS_LINE_NL_01</p>
+              <p class="text-slate-400 mb-1">Oracle</p>
+              <p id="oracleAddr" class="font-semibold break-all">0xBdC9C332237c2308a40715bdB4cab65aA3f9f8A6</p>
             </div>
             <div class="rounded-2xl bg-slate-950/70 p-4 border border-slate-800">
-              <p class="text-slate-400 mb-1">Cooldown</p>
-              <p class="font-semibold">24 hours</p>
+              <p class="text-slate-400 mb-1">Stablecoin</p>
+              <p id="stableAddr" class="font-semibold break-all">0x2ea4c1fc8787afC4980582c0878469bA6D41A337</p>
             </div>
             <div class="rounded-2xl bg-slate-950/70 p-4 border border-slate-800">
-              <p class="text-slate-400 mb-1">Minimum confidence</p>
-              <p class="font-semibold">85%</p>
+              <p class="text-slate-400 mb-1">Chain</p>
+              <p class="font-semibold">Monad Testnet (10143)</p>
             </div>
           </div>
 
@@ -75,14 +131,58 @@
           </div>
         </aside>
       </section>
+
+      <section class="grid lg:grid-cols-3 gap-6">
+        <div class="rounded-3xl border border-slate-800 bg-slate-900 p-6 space-y-4 lg:col-span-1">
+          <h2 class="text-xl font-semibold">Wallet connect</h2>
+          <div class="flex gap-3 flex-wrap">
+            <button id="connectBtn" class="rounded-xl bg-fuchsia-500 px-5 py-3 font-semibold text-white hover:bg-fuchsia-400">Connect wallet</button>
+          </div>
+          <div class="rounded-2xl bg-slate-950/70 border border-slate-800 p-4 text-sm font-mono min-h-20" id="walletout">Wallet disconnected.</div>
+        </div>
+
+        <div class="rounded-3xl border border-slate-800 bg-slate-900 p-6 space-y-4 lg:col-span-1">
+          <h2 class="text-xl font-semibold">Contract reads</h2>
+          <div class="grid sm:grid-cols-3 gap-3">
+            <button class="readBtn rounded-xl border border-slate-700 px-4 py-3 hover:bg-slate-800" data-read="owner">Read owner</button>
+            <button class="readBtn rounded-xl border border-slate-700 px-4 py-3 hover:bg-slate-800" data-read="oracle">Read oracle</button>
+            <button class="readBtn rounded-xl border border-slate-700 px-4 py-3 hover:bg-slate-800" data-read="stablecoin">Read stablecoin</button>
+          </div>
+          <div class="rounded-2xl bg-slate-950/70 border border-slate-800 p-4 text-sm font-mono min-h-20" id="readout">Click a read action.</div>
+        </div>
+
+        <div class="rounded-3xl border border-slate-800 bg-slate-900 p-6 space-y-4 lg:col-span-1">
+          <h2 class="text-xl font-semibold">Writes</h2>
+          <div class="grid gap-3">
+            <button id="policyBtn" class="rounded-xl border border-slate-700 px-4 py-3 hover:bg-slate-800">Create policy</button>
+            <button id="fundBtn" class="rounded-xl border border-slate-700 px-4 py-3 hover:bg-slate-800">Fund pool</button>
+            <button id="claimBtn" class="rounded-xl border border-slate-700 px-4 py-3 hover:bg-slate-800">Trigger claim</button>
+          </div>
+          <div class="rounded-2xl bg-slate-950/70 border border-slate-800 p-4 text-sm font-mono min-h-24" id="writeout">Connect wallet first.</div>
+        </div>
+      </section>
     </main>
 
     <script>
       const log = document.getElementById('log');
       const startBtn = document.getElementById('startBtn');
       const resetBtn = document.getElementById('resetBtn');
+      const readout = document.getElementById('readout');
+      const walletout = document.getElementById('walletout');
+      const writeout = document.getElementById('writeout');
+      const connectBtn = document.getElementById('connectBtn');
+      const policyBtn = document.getElementById('policyBtn');
+      const fundBtn = document.getElementById('fundBtn');
+      const claimBtn = document.getElementById('claimBtn');
       let timer = null;
       let reading = 0;
+      let walletClient = null;
+      let account = null;
+
+      const client = createPublicClient({
+        chain: monadTestnet,
+        transport: http(),
+      });
 
       function row(text, tone = 'text-slate-300') {
         const el = document.createElement('div');
@@ -98,6 +198,69 @@
         log.innerHTML = '';
         row('MachineChain Oracle ready.');
       }
+
+      connectBtn.addEventListener('click', async () => {
+        try {
+          if (!window.ethereum) throw new Error('No wallet found.');
+          walletClient = createWalletClient({
+            chain: monadTestnet,
+            transport: custom(window.ethereum),
+          });
+          const accounts = await walletClient.requestAddresses();
+          account = accounts[0];
+          walletout.textContent = `Connected: ${account}`;
+        } catch (err) {
+          walletout.textContent = `Connect failed: ${err?.shortMessage || err?.message || String(err)}`;
+        }
+      });
+
+      policyBtn.addEventListener('click', async () => {
+        if (!walletClient || !account) return writeout.textContent = 'Connect wallet first.';
+        try {
+          const txHash = await walletClient.writeContract({
+            account,
+            address: MACHINECHAIN.address,
+            abi,
+            functionName: 'createPolicy',
+            args: [pad(stringToHex('PRESS_LINE_NL_01'), { size: 32 }), account, 5000n, 30n],
+          });
+          writeout.textContent = `createPolicy sent: ${txHash}`;
+        } catch (err) {
+          writeout.textContent = `createPolicy failed: ${err?.shortMessage || err?.message || String(err)}`;
+        }
+      });
+
+      fundBtn.addEventListener('click', async () => {
+        if (!walletClient || !account) return writeout.textContent = 'Connect wallet first.';
+        try {
+          const txHash = await walletClient.writeContract({
+            account,
+            address: MACHINECHAIN.stablecoin,
+            abi: [{ type: 'function', stateMutability: 'nonpayable', name: 'approve', inputs: [{ name: 'spender', type: 'address' }, { name: 'amount', type: 'uint256' }], outputs: [{ type: 'bool' }] }],
+            functionName: 'approve',
+            args: [MACHINECHAIN.address, 5000n],
+          });
+          writeout.textContent = `approve sent: ${txHash}`;
+        } catch (err) {
+          writeout.textContent = `approve failed: ${err?.shortMessage || err?.message || String(err)}`;
+        }
+      });
+
+      claimBtn.addEventListener('click', async () => {
+        if (!walletClient || !account) return writeout.textContent = 'Connect wallet first.';
+        try {
+          const txHash = await walletClient.writeContract({
+            account,
+            address: MACHINECHAIN.address,
+            abi,
+            functionName: 'triggerClaim',
+            args: [pad(stringToHex('PRESS_LINE_NL_01'), { size: 32 }), pad(stringToHex('claim-demo-01'), { size: 32 }), 99, 'SIMULATED_FAILURE'],
+          });
+          writeout.textContent = `triggerClaim sent: ${txHash}`;
+        } catch (err) {
+          writeout.textContent = `triggerClaim failed: ${err?.shortMessage || err?.message || String(err)}`;
+        }
+      });
 
       startBtn.addEventListener('click', () => {
         if (timer) return;
@@ -121,6 +284,23 @@
 
       resetBtn.addEventListener('click', reset);
       reset();
+
+      document.querySelectorAll('.readBtn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const fn = btn.dataset.read;
+          readout.textContent = `Reading ${fn}...`;
+          try {
+            const value = await client.readContract({
+              address: MACHINECHAIN.address,
+              abi,
+              functionName: fn,
+            });
+            readout.textContent = `${fn}(): ${JSON.stringify(value)}`;
+          } catch (err) {
+            readout.textContent = `${fn}() failed: ${err?.shortMessage || err?.message || String(err)}`;
+          }
+        });
+      });
     </script>
   </body>
 </html>
