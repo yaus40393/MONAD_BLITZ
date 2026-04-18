@@ -199,23 +199,7 @@
         row('MachineChain Oracle ready.');
       }
 
-      connectBtn.addEventListener('click', async () => {
-        walletout.textContent = "Abriendo MetaMask...";
-        try {
-          if (!window.ethereum) throw new Error("No wallet found. Instala MetaMask u otra wallet EIP-1193.");
-          if (!window.ethereum.isMetaMask) throw new Error("MetaMask no detectado en este navegador.");
-          const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-          if (!accounts || !accounts.length) throw new Error("No accounts returned by wallet.");
-          walletClient = createWalletClient({
-            chain: monadTestnet,
-            transport: custom(window.ethereum),
-          });
-          account = accounts[0];
-          walletout.textContent = `Connected: ${account} (Monad testnet ready)`;
-        } catch (err) {
-          walletout.textContent = `Connect failed: ${err?.shortMessage || err?.message || String(err)}`;
-        }
-      });
+      undefined
 
       policyBtn.addEventListener('click', async () => {
         if (!walletClient || !account) return writeout.textContent = 'Connect wallet first.';
