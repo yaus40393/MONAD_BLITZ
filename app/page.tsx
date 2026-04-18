@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const MACHINECHAIN = {
   address: '0xfdd5f90ac2ee4ab0ad5730a1dd4cb5cce2a91d19',
@@ -36,7 +36,6 @@ export default function Page() {
   const [running, setRunning] = useState(false);
   const [tick, setTick] = useState(0);
   const [readings, setReadings] = useState<Reading[]>([]);
-  const [claimRunning, setClaimRunning] = useState(false);
   const [claimState, setClaimState] = useState<ClaimState>({
     policyActive: false,
     policyNotExpired: false,
@@ -44,6 +43,7 @@ export default function Page() {
     confidenceOk: false,
     claimIdFresh: false,
   });
+  const [sensorState, setSensorState] = useState<'idle' | 'active'>('idle');
 
   useEffect(() => {
     if (!running) return;
@@ -53,34 +53,12 @@ export default function Page() {
         const current = (11.5 + Math.random() * 1.5).toFixed(2);
         const temperature = (58 + Math.random() * 8).toFixed(1);
         const status: 'normal' | 'spike' = next === 10 ? 'spike' : 'normal';
-        setReadings((items) => [
-          { t: next, current, temperature, status },
-          ...items,
-        ].slice(0, 12));
+        setReadings((items) => [{ t: next, current, temperature, status }, ...items].slice(0, 12));
         return next;
       });
     }, 1000);
     return () => clearInterval(id);
   }, [running]);
-
-  useEffect(() => {
-    if (!claimRunning) return;
-    const id = setInterval(() => {
-      setClaimState({
-        policyActive: true,
-        policyNotExpired: true,
-        cooldownOk: true,
-        confidenceOk: true,
-        claimIdFresh: true,
-      });
-    }, 1200);
-    return () => clearInterval(id);
-  }, [claimRunning]);
-
-  const allOk = useMemo(
-    () => Object.values(claimState).every(Boolean),
-    [claimState],
-  );
 
   const start = () => setRunning(true);
   const stop = () => setRunning(false);
@@ -90,10 +68,17 @@ export default function Page() {
     setReadings([]);
   };
 
-  const startClaim = () => setClaimRunning(true);
-  const stopClaim = () => setClaimRunning(false);
+  const setAllTrue = () => {
+    setClaimState({
+      policyActive: true,
+      policyNotExpired: true,
+      cooldownOk: true,
+      confidenceOk: true,
+      claimIdFresh: true,
+    });
+  };
+
   const resetClaim = () => {
-    setClaimRunning(false);
     setClaimState({
       policyActive: false,
       policyNotExpired: false,
@@ -102,6 +87,8 @@ export default function Page() {
       claimIdFresh: false,
     });
   };
+
+  const allOk = Object.values(claimState).every(Boolean);
 
   return (
     <main style={{ minHeight: '100vh', background: '#020617', color: '#e2e8f0', padding: '32px', fontFamily: 'ui-sans-serif, system-ui' }}>
@@ -127,7 +114,7 @@ export default function Page() {
           </aside>
         </section>
 
-        <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+        <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 24 }}>
           <div style={box}>
             <h2>Live Oracle</h2>
             <p style={{ color: '#cbd5e1' }}>Start, Stop y Reset para el muestreo de sensores alimentados con corriente y temperatura.</p>
@@ -147,10 +134,9 @@ export default function Page() {
 
           <div style={box}>
             <h2>Claim verification</h2>
-            <p style={{ color: '#cbd5e1' }}>Verifica en paralelo la póliza activa, no vencida, cooldown, confianza y claimId único.</p>
+            <p style={{ color: '#cbd5e1' }}>Botón único “truy ty” que vuelve true las variables booleanas para emitir el pago.</p>
             <div style={{ display: 'flex', gap: 12, marginTop: 12, flexWrap: 'wrap' }}>
-              <button onClick={startClaim} style={btn}>Start</button>
-              <button onClick={stopClaim} style={btn}>Stop</button>
+              <button onClick={setAllTrue} style={btn}>truy ty</button>
               <button onClick={resetClaim} style={btn}>Reset</button>
             </div>
             <div style={{ marginTop: 20, display: 'grid', gap: 10 }}>
@@ -163,6 +149,19 @@ export default function Page() {
             <div style={{ marginTop: 16, padding: 16, borderRadius: 18, border: `1px solid ${allOk ? '#22c55e' : '#1e293b'}`, background: allOk ? 'rgba(34,197,94,0.15)' : '#020617' }}>
               <div style={{ color: allOk ? '#4ade80' : '#94a3b8', fontWeight: 700, fontSize: 18 }}>{allOk ? 'PAGO EMITIDO' : 'PENDING'}</div>
               <div style={{ color: '#cbd5e1', marginTop: 6 }}>Cuando todas las variables booleanas estén en 1, se emite el pago.</div>
+            </div>
+          </div>
+
+          <div style={box}>
+            <h2>SENSOR</h2>
+            <p style={{ color: '#cbd5e1' }}>Módulo visual de estado del sensor para mostrar actividad en paralelo.</p>
+            <div style={{ display: 'flex', gap: 12, marginTop: 12, flexWrap: 'wrap' }}>
+              <button onClick={() => setSensorState('active')} style={btn}>Start</button>
+              <button onClick={() => setSensorState('idle')} style={btn}>Stop</button>
+              <button onClick={() => setSensorState('idle')} style={btn}>Reset</button>
+            </div>
+            <div style={{ marginTop: 20, padding: 16, borderRadius: 18, border: '1px solid #1e293b', background: '#020617' }}>
+              <div style={{ color: sensorState === 'active' ? '#4ade80' : '#94a3b8', fontWeight: 700, fontSize: 18 }}>{sensorState === 'active' ? 'SENSOR ACTIVO' : 'SENSOR EN ESPERA'}</div>
             </div>
           </div>
         </section>
