@@ -136,7 +136,7 @@
         <div class="rounded-3xl border border-slate-800 bg-slate-900 p-6 space-y-4 lg:col-span-1">
           <h2 class="text-xl font-semibold">Wallet connect</h2>
           <div class="flex gap-3 flex-wrap">
-            <button id="connectBtn" class="rounded-xl bg-fuchsia-500 px-5 py-3 font-semibold text-white hover:bg-fuchsia-400">Connect wallet</button>
+            <button id="connectBtn" class="rounded-xl bg-fuchsia-500 px-5 py-3 font-semibold text-white hover:bg-fuchsia-400 active:scale-95 transition">Connect wallet</button>
           </div>
           <div class="rounded-2xl bg-slate-950/70 border border-slate-800 p-4 text-sm font-mono min-h-20" id="walletout">Wallet disconnected.</div>
         </div>
@@ -200,6 +200,7 @@
       }
 
       connectBtn.addEventListener('click', async () => {
+        walletout.textContent = "Connecting wallet...";
         try {
           if (!window.ethereum) throw new Error("No wallet found. Instala MetaMask u otra wallet EIP-1193.");
           await window.ethereum.request({ method: "eth_requestAccounts" });
