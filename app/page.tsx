@@ -17,6 +17,7 @@ export default function Page() {
   const [readings, setReadings] = useState<Reading[]>([]);
   const [claimFlags, setClaimFlags] = useState<ClaimFlags>({ policyActive: 0, policyNotExpired: 0, cooldownOk: 0, confidenceOk: 0, claimIdFresh: 0 });
   const [startedOnce, setStartedOnce] = useState<0 | 1>(0);
+  const [startPressed, setStartPressed] = useState<0 | 1>(0);
 
   useEffect(() => {
     if (!running) return;
@@ -30,6 +31,7 @@ export default function Page() {
         return next;
       });
       setStartedOnce(1);
+      setStartPressed(1);
     }, 1000);
     return () => clearInterval(id);
   }, [running]);
@@ -60,9 +62,9 @@ export default function Page() {
             <h2>Live Oracle</h2>
             <p style={{ color: '#cbd5e1' }}>Start/Stop/Reset para el muestreo de sensores alimentados con corriente y temperatura.</p>
             <div style={{ display: 'flex', gap: 12, marginTop: 12, flexWrap: 'wrap' }}>
-              <button onClick={() => { setRunning(true); setStartedOnce(1); }} style={btn}>Start</button>
-              <button onClick={() => setRunning(false)} style={btn}>Stop</button>
-              <button onClick={() => { setRunning(false); setTick(0); setReadings([]); setStartedOnce(0); }} style={btn}>Reset</button>
+              <button onClick={() => { setRunning(true); setStartedOnce(1); setStartPressed(1); }} style={btn}>Start</button>
+              <button onClick={() => { setRunning(false); }} style={btn}>Stop</button>
+              <button onClick={() => { setRunning(false); setTick(0); setReadings([]); setStartedOnce(0); setStartPressed(0); }} style={btn}>Reset</button>
             </div>
             <div style={{ marginTop: 20, display: 'grid', gap: 10 }}>
               <Info label="Estado" value={running ? 'Sampling sensors...' : 'Stopped'} />
@@ -90,10 +92,14 @@ export default function Page() {
           </div>
 
           <div style={box}>
-            <h2>SENSOR</h2>
-            <p style={{ color: '#cbd5e1' }}>Módulo visual de estado, sin controles propios.</p>
-            <div style={{ marginTop: 20, padding: 16, borderRadius: 18, border: '1px solid #1e293b', background: '#020617' }}>
-              <div style={{ color: startedOnce ? '#4ade80' : '#94a3b8', fontWeight: 700, fontSize: 18 }}>{startedOnce ? 'SENSOR TRUE' : 'SENSOR FALSE'}</div>
+            <h2>CONDITIONS</h2>
+            <p style={{ color: '#cbd5e1' }}>Start de la simulación 1 y Check de la simulación 2 determinan este estado.</p>
+            <div style={{ marginTop: 20, display: 'grid', gap: 10 }}>
+              <Info label="Start pressed" value={String(startPressed)} />
+              <Info label="Check" value={String(allOk ? 1 : 0)} />
+            </div>
+            <div style={{ marginTop: 18, padding: 16, borderRadius: 18, border: '1px solid #1e293b', background: '#020617' }}>
+              <div style={{ color: (startPressed && allOk) ? '#4ade80' : '#94a3b8', fontWeight: 700, fontSize: 18 }}>{(startPressed && allOk) ? 'TRUE' : 'FALSE'}</div>
             </div>
           </div>
         </section>
@@ -102,18 +108,9 @@ export default function Page() {
   );
 }
 
-function Card({ title, value, color }: { title: string; value: string; color: string }) {
-  return <div style={{ ...mini, borderColor: '#1e293b' }}><div style={{ color: '#94a3b8' }}>{title}</div><div style={{ color, fontSize: 28, fontWeight: 700 }}>{value}</div></div>;
-}
-function Info({ label, value }: { label: string; value: string }) {
-  return <div style={mini}><div style={{ color: '#94a3b8' }}>{label}</div><div style={{ wordBreak: 'break-all', fontWeight: 600 }}>{value}</div></div>;
-}
-function ReadingRow({ reading }: { reading: Reading }) {
-  return <div style={{ ...mini, borderColor: reading.status === 'spike' ? '#f59e0b' : '#1e293b' }}><b>t={reading.t}</b> · corriente {reading.current}A · temp {reading.temperature}°C {reading.status === 'spike' ? '· SPIKE' : ''}</div>;
-}
-function FlagRow({ label, value, onZero, onOne }: { label: string; value: 0 | 1; onZero: () => void; onOne: () => void; }) {
-  return <div style={{ ...mini, display: 'grid', gap: 8 }}><div><b>{label}</b> · estado: {value}</div><div style={{ display: 'flex', gap: 8 }}><button onClick={onZero} style={btn}>0</button><button onClick={onOne} style={btn}>1</button></div></div>;
-}
+function Info({ label, value }: { label: string; value: string }) { return <div style={mini}><div style={{ color: '#94a3b8' }}>{label}</div><div style={{ wordBreak: 'break-all', fontWeight: 600 }}>{value}</div></div>; }
+function ReadingRow({ reading }: { reading: Reading }) { return <div style={{ ...mini, borderColor: reading.status === 'spike' ? '#f59e0b' : '#1e293b' }}><b>t={reading.t}</b> · corriente {reading.current}A · temp {reading.temperature}°C {reading.status === 'spike' ? '· SPIKE' : ''}</div>; }
+function FlagRow({ label, value, onZero, onOne }: { label: string; value: 0 | 1; onZero: () => void; onOne: () => void; }) { return <div style={{ ...mini, display: 'grid', gap: 8 }}><div><b>{label}</b> · estado: {value}</div><div style={{ display: 'flex', gap: 8 }}><button onClick={onZero} style={btn}>0</button><button onClick={onOne} style={btn}>1</button></div></div>; }
 
 const box: React.CSSProperties = { border: '1px solid #1e293b', background: '#0f172a', borderRadius: 24, padding: 24 };
 const mini: React.CSSProperties = { border: '1px solid #1e293b', background: '#020617', borderRadius: 18, padding: 16 };
