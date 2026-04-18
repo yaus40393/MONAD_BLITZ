@@ -98,7 +98,7 @@ export default function Page() {
 
           <div style={box}>
             <h2>Claim verification</h2>
-            <p style={{ color: '#cbd5e1' }}>Cinco botones por condición, inicializan en 0 y se ponen en 1 manualmente.</p>
+            <p style={{ color: '#cbd5e1' }}>Claim verification se mantiene en 0 hasta que las cinco condiciones de la simulación 2 estén en 1.</p>
             <div style={{ display: 'grid', gap: 12, marginTop: 12 }}>
               <FlagRow label="Póliza activa" value={claimFlags.policyActive} onZero={() => setFlag('policyActive', 0)} onOne={() => setFlag('policyActive', 1)} />
               <FlagRow label="Póliza no vencida" value={claimFlags.policyNotExpired} onZero={() => setFlag('policyNotExpired', 0)} onOne={() => setFlag('policyNotExpired', 1)} />
@@ -112,41 +112,31 @@ export default function Page() {
             </div>
           </div>
 
+
           <div style={box}>
-            <h2>SENSOR</h2>
-            <p style={{ color: '#cbd5e1' }}>Módulo de estado, lee la primera simulación y la segunda en paralelo.</p>
+            <h2>Claim verification</h2>
+            <p style={{ color: '#cbd5e1' }}>Se mantiene en 0 hasta que las cinco condiciones de la simulación 2 estén en 1.</p>
             <div style={{ marginTop: 20, display: 'grid', gap: 10 }}>
-              <Info label="Start presionado" value={String(startedOnce)} />
               <Info label="Póliza activa" value={String(claimFlags.policyActive)} />
-              <Info label="Pago" value={allOk ? 'EMITIDO' : 'NO EMITIDO'} />
-              <Info label="Sensor" value={sensorActive ? 'TRUE' : 'FALSE'} />
+              <Info label="Póliza no vencida" value={String(claimFlags.policyNotExpired)} />
+              <Info label="Cooldown 24h" value={String(claimFlags.cooldownOk)} />
+              <Info label="Confianza ≥ 85" value={String(claimFlags.confidenceOk)} />
+              <Info label="claimId no procesado" value={String(claimFlags.claimIdFresh)} />
             </div>
-            <div style={{ marginTop: 18, display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10 }}>
-              <button onClick={() => setSensorActive(0)} style={btn}>0</button>
-              <button onClick={() => setSensorActive(1)} style={btn}>1</button>
+            <div style={{ marginTop: 16, padding: 16, borderRadius: 18, border: `1px solid ${allOk ? '#22c55e' : '#1e293b'}`, background: allOk ? 'rgba(34,197,94,0.15)' : '#020617' }}>
+              <div style={{ color: allOk ? '#4ade80' : '#94a3b8', fontWeight: 700, fontSize: 18 }}>{allOk ? 'PAGO EMITIDO' : 'PENDING'}</div>
+              <div style={{ color: '#cbd5e1', marginTop: 6 }}>Cuando todo esté en 1, se emite el pago.</div>
+            </div>
+          </div>
+
+          <div style={box}>
+            <h2>Sensor status</h2>
+            <p style={{ color: '#cbd5e1' }}>Indicador visual simple, sin botón de control propio.</p>
+            <div style={{ marginTop: 20, padding: 16, borderRadius: 18, border: '1px solid #1e293b', background: '#020617' }}>
+              <div style={{ color: startedOnce ? '#4ade80' : '#94a3b8', fontWeight: 700, fontSize: 18 }}>{startedOnce ? 'SENSOR TRUE' : 'SENSOR FALSE'}</div>
             </div>
           </div>
         </section>
       </div>
     </main>
-  );
-}
-
-function Card({ title, value, color }: { title: string; value: string; color: string }) {
-  return <div style={{ ...mini, borderColor: '#1e293b' }}><div style={{ color: '#94a3b8' }}>{title}</div><div style={{ color, fontSize: 28, fontWeight: 700 }}>{value}</div></div>;
-}
-function Info({ label, value }: { label: string; value: string }) { return <div style={{ ...mini }}><div style={{ color: '#94a3b8' }}>{label}</div><div style={{ wordBreak: 'break-all', fontWeight: 600 }}>{value}</div></div>; }
-function ReadingRow({ reading }: { reading: Reading }) { return <div style={{ ...mini, borderColor: reading.status === 'spike' ? '#f59e0b' : '#1e293b' }}><b>t={reading.t}</b> · corriente {reading.current}A · temp {reading.temperature}°C {reading.status === 'spike' ? '· SPIKE' : ''}</div>; }
-function FlagRow({ label, value, onZero, onOne }: { label: string; value: 0 | 1; onZero: () => void; onOne: () => void; }) {
-  return <div style={{ ...mini, display: 'grid', gap: 8 }}>
-    <div><b>{label}</b> · estado: {value}</div>
-    <div style={{ display: 'flex', gap: 8 }}>
-      <button onClick={onZero} style={btn}>0</button>
-      <button onClick={onOne} style={btn}>1</button>
-    </div>
-  </div>;
-}
-
-const box: React.CSSProperties = { border: '1px solid #1e293b', background: '#0f172a', borderRadius: 24, padding: 24 };
-const mini: React.CSSProperties = { border: '1px solid #1e293b', background: '#020617', borderRadius: 18, padding: 16 };
-const btn: React.CSSProperties = { padding: '12px 16px', borderRadius: 14, border: '1px solid #334155', background: '#111827', color: '#e2e8f0', cursor: 'pointer' };
+// confirmation
