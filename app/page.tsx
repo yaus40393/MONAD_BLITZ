@@ -48,7 +48,7 @@ export default function Page() {
           <div>
             <div style={{ display: 'inline-block', padding: '6px 12px', border: '1px solid #0891b2', borderRadius: 999, color: '#67e8f9' }}>Monad hackathon demo</div>
             <h1 style={{ fontSize: 56, lineHeight: 1, marginTop: 16, marginBottom: 16 }}>MachineChain</h1>
-            <p style={{ fontSize: 18, color: '#cbd5e1' }}>Parametric industrial insurance triggered by AI. No adjusters. No delays. Automatic payouts on Monad.</p>
+            <p style={{ fontSize: 18, color: '#cbd5e1' }}>Parametric industrial insurance triggered by AI, built for Monad testnet.</p>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginTop: 24 }}>
               <Card title="Settlement" value="<10s" color="#4ade80" />
@@ -58,8 +58,9 @@ export default function Page() {
 
             <div style={box}>
               <h2>Live oracle simulator</h2>
-              <button onClick={() => { push('Monitoring started on PRESS_LINE_NL_01'); push('[t=10] SENSOR SPIKE DETECTED'); push('FAILURE DETECTED, confidence 99%, sending triggerClaim()'); }} style={btn}>Start monitoring</button>
-              <div style={{ display: 'grid', gap: 8, marginTop: 12 }}>{log.map((x, i) => <Line key={i} text={x} />)}</div>
+              <div style={{ display: 'grid', gap: 8, marginTop: 12 }}>
+                {log.map((x, i) => <Line key={i} text={x} />)}
+              </div>
             </div>
           </div>
 
@@ -72,19 +73,6 @@ export default function Page() {
           </aside>
         </section>
 
-        <section style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 24 }}>
-          <div style={box}>
-            <h2>Demo visual</h2>
-            <p style={{ color: '#cbd5e1' }}>
-              MachineChain muestra el contrato, la red Monad testnet y una simulación visual del oracle.
-              Esta versión no incluye botones de wallet ni acciones on-chain.
-            </p>
-            <Info label="Contract" value={MACHINECHAIN.address} />
-            <Info label="Oracle" value={MACHINECHAIN.oracle} />
-            <Info label="Stablecoin" value={MACHINECHAIN.stablecoin} />
-            <Info label="Chain" value="Monad Testnet (10143)" />
-          </div>
-        </section>
       </div>
     </main>
   );
