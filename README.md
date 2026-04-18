@@ -1,42 +1,53 @@
 # MachineChain
 
-Parametric industrial insurance triggered by AI on Monad.
+MachineChain is a parametric industrial insurance demo built for Monad testnet.
 
-## What it does
+## What the frontend does
 
-MachineChain detects equipment failure from industrial sensor data and automatically triggers an on-chain insurance payout.
+This frontend is a live demo of the protocol. It:
 
-Flow:
-1. Sensors stream machine telemetry.
-2. An AI oracle classifies anomalies.
-3. A Monad smart contract verifies policy conditions.
-4. USDC payout is released automatically.
+- shows the real MachineChain contract address
+- shows the Monad testnet network details
+- reads contract data on-chain
+- simulates the oracle sensor stream visually
+- lets you connect a wallet with the browser extension
+- exposes buttons for contract actions:
+  - createPolicy
+  - fundPool
+  - triggerClaim
 
-## Repo structure
+## What the wallet button should do
 
-- `contracts/MachineChain.sol` — insurance protocol smart contract
-- `scripts/machinechain_oracle.py` — demo oracle simulator
-- `docs/submission.md` — hackathon submission narrative
+When you click **Connect wallet**, the app should:
 
-## Demo flow
+1. Detect a browser wallet extension
+2. Ask for permission to connect
+3. Let you choose one of your accounts
+4. Confirm or switch to Monad testnet if needed
+5. Show your connected address in the UI
+6. Enable the write actions
 
-1. Create and fund a policy for a machine.
-2. Run the oracle simulator.
-3. Force an anomaly on reading 10.
-4. Trigger `triggerClaim()` on the contract.
-5. Show payout event and tx on Monad testnet.
+If nothing happens, usually one of these is true:
 
-## Why Monad
+- no wallet extension is installed
+- the extension blocked the popup
+- the page is still cached and not using the latest build
+- the wallet is on the wrong network
 
-- High throughput
-- EVM compatibility
-- Low fees
-- Fast finality
-- Parallel execution
+## Network
 
-## Next suggested steps
+- Chain ID: `10143`
+- RPC: `https://testnet-rpc.monad.xyz`
+- Explorer: `https://testnet.monadexplorer.com`
+- Faucet: `https://faucet.monad.xyz`
 
-- Add Foundry or Hardhat config
-- Deploy contract to Monad testnet
-- Replace simulated oracle call with real transaction sending
-- Add a simple dashboard for the live demo
+## Contract
+
+```js
+const MACHINECHAIN = {
+  address: "0xfdd5f90ac2ee4ab0ad5730a1dd4cb5cce2a91d19",
+  stablecoin: "0x2ea4c1fc8787afC4980582c0878469bA6D41A337",
+  oracle: "0xBdC9C332237c2308a40715bdB4cab65aA3f9f8A6",
+};
+```
+
