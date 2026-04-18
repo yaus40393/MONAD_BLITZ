@@ -201,14 +201,15 @@
 
       connectBtn.addEventListener('click', async () => {
         try {
-          if (!window.ethereum) throw new Error('No wallet found.');
+          if (!window.ethereum) throw new Error("No wallet found. Instala MetaMask u otra wallet EIP-1193.");
+          await window.ethereum.request({ method: "eth_requestAccounts" });
           walletClient = createWalletClient({
             chain: monadTestnet,
             transport: custom(window.ethereum),
           });
           const accounts = await walletClient.requestAddresses();
           account = accounts[0];
-          walletout.textContent = `Connected: ${account}`;
+          walletout.textContent = `Connected: ${account} (Monad testnet ready)`;
         } catch (err) {
           walletout.textContent = `Connect failed: ${err?.shortMessage || err?.message || String(err)}`;
         }
