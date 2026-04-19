@@ -18,7 +18,6 @@ export default function Page() {
   const [claimFlags, setClaimFlags] = useState<ClaimFlags>({ policyActive: 0, policyNotExpired: 0, cooldownOk: 0, confidenceOk: 0, claimIdFresh: 0 });
   const [startedOnce, setStartedOnce] = useState<0 | 1>(0);
   const [startPressed, setStartPressed] = useState<0 | 1>(0);
-  const [faultCount, setFaultCount] = useState(0);
 
   useEffect(() => {
     if (!running) return;
@@ -39,7 +38,6 @@ export default function Page() {
 
   const setFlag = (key: keyof ClaimFlags, value: 0 | 1) => setClaimFlags((prev) => ({ ...prev, [key]: value }));
   const allOk = Object.values(claimFlags).every((v) => v === 1) && startedOnce === 1;
-  const failCheck = startPressed === 1 && startedOnce === 0 ? 1 : 0;
 
   return (
     <main style={{ minHeight: '100vh', background: '#020617', color: '#e2e8f0', padding: 32, fontFamily: 'ui-sans-serif, system-ui' }}>
@@ -66,7 +64,7 @@ export default function Page() {
             <div style={{ display: 'flex', gap: 12, marginTop: 12, flexWrap: 'wrap' }}>
               <button onClick={() => { setRunning(true); setStartedOnce(1); setStartPressed(1); }} style={btn}>Start</button>
               <button onClick={() => { setRunning(false); }} style={btn}>Stop</button>
-              <button onClick={() => { setRunning(false); setTick(0); setReadings([]); setStartedOnce(0); setStartPressed(0); setFaultCount(0); }} style={btn}>Reset</button>
+              <button onClick={() => { setRunning(false); setTick(0); setReadings([]); setStartedOnce(0); setStartPressed(0); }} style={btn}>Reset</button>
             </div>
             <div style={{ marginTop: 20, display: 'grid', gap: 10 }}>
               <Info label="Estado" value={running ? 'Sampling sensors...' : 'Stopped'} />
@@ -88,8 +86,8 @@ export default function Page() {
               <FlagRow label="claimId no procesado" value={claimFlags.claimIdFresh} onZero={() => setFlag('claimIdFresh', 0)} onOne={() => setFlag('claimIdFresh', 1)} />
             </div>
             <div style={{ marginTop: 16, display: 'grid', gap: 10 }}>
-              <Info label="Fallos en simulación 1" value={String(faultCount)} />
-              <button onClick={() => setFaultCount((v) => v + 1)} style={btn}>Registrar fallo</button>
+              <Info label="Fallos por Start" value={String(startPressed === 1 ? 1 : 0)} />
+              <button onClick={() => setStartPressed(1)} style={btn}>Start fallo</button>
             </div>
           </div>
 
@@ -99,7 +97,7 @@ export default function Page() {
             <div style={{ marginTop: 20, display: 'grid', gap: 10 }}>
               <Info label="Start pressed" value={String(startPressed)} />
               <Info label="Check" value={String(allOk ? 1 : 0)} />
-              <Info label="Failed runs" value={String(failCheck ? faultCount : 0)} />
+              <Info label="Failed runs" value={String(startPressed === 1 ? 1 : 0)} />
             </div>
             <div style={{ marginTop: 18, padding: 16, borderRadius: 18, border: '1px solid #1e293b', background: '#020617' }}>
               <div style={{ color: (startPressed && allOk) ? '#4ade80' : '#94a3b8', fontWeight: 700, fontSize: 18 }}>{(startPressed && allOk) ? 'TRUE' : 'FALSE'}</div>
