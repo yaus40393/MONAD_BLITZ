@@ -64,7 +64,7 @@ export default function Page() {
             <h2>Live Oracle</h2>
             <p style={{ color: '#cbd5e1' }}>Start/Stop/Reset para el muestreo de sensores alimentados con corriente y temperatura.</p>
             <div style={{ display: 'flex', gap: 12, marginTop: 12, flexWrap: 'wrap' }}>
-              <button onClick={() => { setRunning(true); setStartedOnce(1); setFaultCount1((v) => v + 1); }} style={btn}>Start</button>
+              <button onClick={() => { setRunning(true); setStartedOnce(1); }} style={btn}>Start</button>
               <button onClick={() => { setRunning(false); }} style={btn}>Stop</button>
               <button onClick={() => { setRunning(false); setTick(0); setReadings([]); setStartedOnce(0); setFaultCount1(0); setFaultCount2(0); }} style={btn}>Reset</button>
             </div>
