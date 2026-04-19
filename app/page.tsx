@@ -18,6 +18,8 @@ export default function Page() {
   const [claimFlags, setClaimFlags] = useState<ClaimFlags>({ policyActive: 0, policyNotExpired: 0, cooldownOk: 0, confidenceOk: 0, claimIdFresh: 0 });
   const [startedOnce, setStartedOnce] = useState<0 | 1>(0);
   const [startPressed, setStartPressed] = useState<0 | 1>(0);
+  const [faultCount2, setFaultCount2] = useState(0);
+  const [faultCount1, setFaultCount1] = useState(0);
 
   useEffect(() => {
     if (!running) return;
@@ -37,7 +39,8 @@ export default function Page() {
   }, [running]);
 
   const setFlag = (key: keyof ClaimFlags, value: 0 | 1) => setClaimFlags((prev) => ({ ...prev, [key]: value }));
-  const allOk = Object.values(claimFlags).every((v) => v === 1) && startedOnce === 1;
+  const sim2AllTrue = Object.values(claimFlags).every((v) => v === 1) && startedOnce === 1;
+  const paymentState = sim2AllTrue && (faultCount1 > 0 || faultCount2 > 0) ? 'PAGO EFECTUADO' : 'FALTA';
 
   return (
     <main style={{ minHeight: '100vh', background: '#020617', color: '#e2e8f0', padding: 32, fontFamily: 'ui-sans-serif, system-ui' }}>
@@ -62,9 +65,9 @@ export default function Page() {
             <h2>Live Oracle</h2>
             <p style={{ color: '#cbd5e1' }}>Start/Stop/Reset para el muestreo de sensores alimentados con corriente y temperatura.</p>
             <div style={{ display: 'flex', gap: 12, marginTop: 12, flexWrap: 'wrap' }}>
-              <button onClick={() => { setRunning(true); setStartedOnce(1); setStartPressed(1); }} style={btn}>Start</button>
+              <button onClick={() => { setRunning(true); setStartedOnce(1); setStartPressed(1); setFaultCount1((v) => v + 1); }} style={btn}>Start</button>
               <button onClick={() => { setRunning(false); }} style={btn}>Stop</button>
-              <button onClick={() => { setRunning(false); setTick(0); setReadings([]); setStartedOnce(0); setStartPressed(0); }} style={btn}>Reset</button>
+              <button onClick={() => { setRunning(false); setTick(0); setReadings([]); setStartedOnce(0); setStartPressed(0); setFaultCount1(0); }} style={btn}>Reset</button>
             </div>
             <div style={{ marginTop: 20, display: 'grid', gap: 10 }}>
               <Info label="Estado" value={running ? 'Sampling sensors...' : 'Stopped'} />
@@ -86,21 +89,22 @@ export default function Page() {
               <FlagRow label="claimId no procesado" value={claimFlags.claimIdFresh} onZero={() => setFlag('claimIdFresh', 0)} onOne={() => setFlag('claimIdFresh', 1)} />
             </div>
             <div style={{ marginTop: 16, display: 'grid', gap: 10 }}>
-              <Info label="Fallos por Start" value={String(startPressed === 1 ? 1 : 0)} />
-              <button onClick={() => setStartPressed(1)} style={btn}>Start fallo</button>
+              <Info label="Fallos simulación 2" value={String(faultCount2)} />
+              <button onClick={() => setFaultCount2((v) => v + 1)} style={btn}>Registrar fallo</button>
             </div>
           </div>
 
           <div style={box}>
             <h2>CONDITIONS</h2>
-            <p style={{ color: '#cbd5e1' }}>Start de la simulación 1 y Check de la simulación 2 determinan este estado.</p>
+            <p style={{ color: '#cbd5e1' }}>El pago depende de Start, de las condiciones true y de los fallos detectados.</p>
             <div style={{ marginTop: 20, display: 'grid', gap: 10 }}>
               <Info label="Start pressed" value={String(startPressed)} />
-              <Info label="Check" value={String(allOk ? 1 : 0)} />
+              <Info label="Check" value={String(sim2AllTrue ? 1 : 0)} />
+              <Info label="Payment" value={paymentState} />
             </div>
             <div style={{ marginTop: 18, padding: 16, borderRadius: 18, border: '1px solid #1e293b', background: '#020617' }}>
-              <div style={{ color: (startPressed && allOk) ? '#4ade80' : '#94a3b8', fontWeight: 700, fontSize: 18 }}>{(startPressed && allOk) ? 'TRUE' : 'FALSE'}</div>
-              <div style={{ color: '#cbd5e1', marginTop: 6 }}>{allOk ? 'Pago emitido.' : 'Pending until sim 2 is fully true.'}</div>
+              <div style={{ color: paymentState === 'PAGO EFECTUADO' ? '#4ade80' : '#94a3b8', fontWeight: 700, fontSize: 18 }}>{paymentState}</div>
+              <div style={{ color: '#cbd5e1', marginTop: 6 }}>{paymentState === 'PAGO EFECTUADO' ? 'Las condiciones siguen true y hubo fallo detectado.' : 'Falta cumplir la condición.'}</div>
             </div>
           </div>
         </section>
