@@ -28,6 +28,8 @@ export default function Page() {
         const current = (11.5 + Math.random() * 1.5).toFixed(2);
         const temperature = (58 + Math.random() * 8).toFixed(1);
         const status: 'normal' | 'spike' = 'normal';
+        const fault = parseFloat(current) > 12;
+        if (fault) setFaultCount1((v) => v + 1);
         setReadings((items) => [{ t: next, current, temperature, status }, ...items].slice(0, 12));
         return next;
       });
