@@ -67,7 +67,7 @@ export default function Page() {
             <div style={{ display: 'flex', gap: 12, marginTop: 12, flexWrap: 'wrap' }}>
               <button onClick={() => { setRunning(true); setStartedOnce(1); setStartPressed(1); setFaultCount1((v) => v + 1); }} style={btn}>Start</button>
               <button onClick={() => { setRunning(false); }} style={btn}>Stop</button>
-              <button onClick={() => { setRunning(false); setTick(0); setReadings([]); setStartedOnce(0); setStartPressed(0); setFaultCount1(0); }} style={btn}>Reset</button>
+              <button onClick={() => { setRunning(false); setTick(0); setReadings([]); setStartedOnce(0); setStartPressed(0); setFaultCount1(0); setFaultCount2(0); }} style={btn}>Reset</button>
             </div>
             <div style={{ marginTop: 20, display: 'grid', gap: 10 }}>
               <Info label="Estado" value={running ? 'Sampling sensors...' : 'Stopped'} />
@@ -90,7 +90,7 @@ export default function Page() {
             </div>
             <div style={{ marginTop: 16, display: 'grid', gap: 10 }}>
               <Info label="Fallos simulación 2" value={String(faultCount2)} />
-              <button onClick={() => setFaultCount2((v) => v + 1)} style={btn}>Registrar fallo</button>
+              <button onClick={() => setFaultCount2((v) => v + 1)} style={btn}>Fallo</button>
             </div>
           </div>
 
