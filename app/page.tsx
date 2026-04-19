@@ -38,7 +38,7 @@ export default function Page() {
 
   const setFlag = (key: keyof ClaimFlags, value: 0 | 1) => setClaimFlags((prev) => ({ ...prev, [key]: value }));
   const sim2AllTrue = Object.values(claimFlags).every((v) => v === 1) && startedOnce === 1;
-  const paymentState = sim2AllTrue && faultCount1 > 0 ? 'PAGO EFECTUADO' : 'PAGO NO EFECTUADO';
+  const paymentState = sim2AllTrue && running && faultCount1 > 0 ? 'PAGO EFECTUADO' : 'PAGO NO EFECTUADO';
   const paymentColor = paymentState === 'PAGO EFECTUADO' ? '#4ade80' : '#94a3b8';
 
   return (
