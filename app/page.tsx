@@ -40,7 +40,7 @@ export default function Page() {
 
   const setFlag = (key: keyof ClaimFlags, value: 0 | 1) => setClaimFlags((prev) => ({ ...prev, [key]: value }));
   const sim2AllTrue = Object.values(claimFlags).every((v) => v === 1) && startedOnce === 1;
-  const paymentState = (running && sim2AllTrue && faultCount1 > 0) ? 'PAGO EFECTUADO' : 'PAGO NO EFECTUADO';
+  const paymentState = (sim2AllTrue && faultCount1 > 0) ? 'PAGO EFECTUADO' : 'PAGO NO EFECTUADO';
   const paymentColor = paymentState === 'PAGO EFECTUADO' ? '#4ade80' : '#94a3b8';
 
   return (
@@ -102,7 +102,7 @@ export default function Page() {
             </div>
             <div style={{ marginTop: 18, padding: 16, borderRadius: 18, border: '1px solid #1e293b', background: '#020617' }}>
               <div style={{ color: paymentColor, fontWeight: 700, fontSize: 18 }}>{paymentState}</div>
-              <div style={{ color: '#cbd5e1', marginTop: 6 }}>Se activa cuando Start está presionado, la simulación 2 está completa y la simulación 1 detecta fallo.</div>
+              <div style={{ color: '#cbd5e1', marginTop: 6 }}>Se activa cuando la simulación 2 está completa y la simulación 1 detecta fallo.</div>
               <div style={{ color: '#cbd5e1', marginTop: 6 }}>{paymentState === 'PAGO EFECTUADO' ? 'Las condiciones siguen true y hubo fallo detectado.' : 'Falta cumplir la condición.'}</div>
             </div>
           </div>
