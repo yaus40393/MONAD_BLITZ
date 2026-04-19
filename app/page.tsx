@@ -41,7 +41,7 @@ export default function Page() {
   const setFlag = (key: keyof ClaimFlags, value: 0 | 1) => setClaimFlags((prev) => ({ ...prev, [key]: value }));
   const sim2AllTrue = Object.values(claimFlags).every((v) => v === 1) && startedOnce === 1;
   const paymentState = sim2AllTrue && (faultCount1 > 0 || faultCount2 > 0) ? 'PAGO EFECTUADO' : 'FALTA';
-  const faltaColor = faultCount2 > 0 ? '#4ade80' : '#94a3b8';
+  const faltaColor = (faultCount2 > 0 || sim2AllTrue) ? '#4ade80' : '#94a3b8';
 
   return (
     <main style={{ minHeight: '100vh', background: '#020617', color: '#e2e8f0', padding: 32, fontFamily: 'ui-sans-serif, system-ui' }}>
