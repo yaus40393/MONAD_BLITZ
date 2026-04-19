@@ -102,7 +102,7 @@ export default function Page() {
             </div>
             <div style={{ marginTop: 18, padding: 16, borderRadius: 18, border: '1px solid #1e293b', background: '#020617' }}>
               <div style={{ color: paymentColor, fontWeight: 700, fontSize: 18 }}>{paymentState}</div>
-              <div style={{ color: '#cbd5e1', marginTop: 6 }}>Se activa cuando la simulación 2 está completa y la simulación 1 detecta fallo.</div>
+              <div style={{ color: '#cbd5e1', marginTop: 6 }}>Se activa solo cuando las 5 condiciones de la simulación 2 son verdaderas y la simulación 1 detecta fallo. Si alguna falla o no hay fallo, queda en PAGO NO EFECTUADO.</div>
               <div style={{ color: '#cbd5e1', marginTop: 6 }}>{paymentState === 'PAGO EFECTUADO' ? 'Las condiciones siguen true y hubo fallo detectado.' : 'Falta cumplir la condición.'}</div>
             </div>
           </div>
