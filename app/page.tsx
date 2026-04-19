@@ -88,7 +88,7 @@ export default function Page() {
               <FlagRow label="claimId no procesado" value={claimFlags.claimIdFresh} onZero={() => setFlag('claimIdFresh', 0)} onOne={() => setFlag('claimIdFresh', 1)} />
             </div>
             <div style={{ marginTop: 16, display: 'grid', gap: 10 }}>
-              <Info label="Fallos simulación 1" value={String(faultCount1)} />
+              <Info label="Fallos simulación 1 (en vivo)" value={String(faultCount1)} />
             </div>
           </div>
 
