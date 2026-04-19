@@ -38,8 +38,8 @@ export default function Page() {
 
   const setFlag = (key: keyof ClaimFlags, value: 0 | 1) => setClaimFlags((prev) => ({ ...prev, [key]: value }));
   const sim2AllTrue = Object.values(claimFlags).every((v) => v === 1) && startedOnce === 1;
-  const paymentState = sim2AllTrue && (faultCount1 > 0 || faultCount2 > 0) ? 'PAGO EFECTUADO' : 'FALTA';
-  const faltaColor = (sim2AllTrue && faultCount1 > 0) ? '#4ade80' : '#94a3b8';
+  const paymentState = sim2AllTrue && (faultCount1 > 0 || faultCount2 > 0) ? 'PAGO EFECTUADO' : 'PAGO NO EFECTUADO';
+  const paymentColor = paymentState === 'PAGO EFECTUADO' ? '#4ade80' : '#94a3b8';
 
   return (
     <main style={{ minHeight: '100vh', background: '#020617', color: '#e2e8f0', padding: 32, fontFamily: 'ui-sans-serif, system-ui' }}>
@@ -99,7 +99,7 @@ export default function Page() {
               <Info label="Check" value={String(sim2AllTrue ? 1 : 0)} />
             </div>
             <div style={{ marginTop: 18, padding: 16, borderRadius: 18, border: '1px solid #1e293b', background: '#020617' }}>
-              <div style={{ color: paymentState === 'PAGO EFECTUADO' ? '#4ade80' : faltaColor, fontWeight: 700, fontSize: 18 }}>{paymentState}</div>
+              <div style={{ color: paymentColor, fontWeight: 700, fontSize: 18 }}>{paymentState}</div>
               <div style={{ color: '#cbd5e1', marginTop: 6 }}>{paymentState === 'PAGO EFECTUADO' ? 'Las condiciones siguen true y hubo fallo detectado.' : 'Falta cumplir la condición.'}</div>
             </div>
           </div>
