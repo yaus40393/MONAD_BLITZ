@@ -87,10 +87,6 @@ export default function Page() {
               <FlagRow label="Confianza ≥ 85" value={claimFlags.confidenceOk} onZero={() => setFlag('confidenceOk', 0)} onOne={() => setFlag('confidenceOk', 1)} />
               <FlagRow label="claimId no procesado" value={claimFlags.claimIdFresh} onZero={() => setFlag('claimIdFresh', 0)} onOne={() => setFlag('claimIdFresh', 1)} />
             </div>
-            <div style={{ marginTop: 16, padding: 16, borderRadius: 18, border: `1px solid ${allOk ? '#22c55e' : '#1e293b'}`, background: allOk ? 'rgba(34,197,94,0.15)' : '#020617' }}>
-              <div style={{ color: '#94a3b8', fontWeight: 700, fontSize: 18 }}>{allOk ? 'READY' : 'PENDING'}</div>
-              <div style={{ color: '#cbd5e1', marginTop: 6 }}>Si todo está en 1 y el Start de la primera simulación fue presionado, se emite el pago.</div>
-            </div>
             <div style={{ marginTop: 16, display: 'grid', gap: 10 }}>
               <Info label="Fallos en simulación 1" value={String(faultCount)} />
               <button onClick={() => setFaultCount((v) => v + 1)} style={btn}>Registrar fallo</button>
