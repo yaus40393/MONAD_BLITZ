@@ -17,7 +17,6 @@ export default function Page() {
   const [readings, setReadings] = useState<Reading[]>([]);
   const [claimFlags, setClaimFlags] = useState<ClaimFlags>({ policyActive: 0, policyNotExpired: 0, cooldownOk: 0, confidenceOk: 0, claimIdFresh: 0 });
   const [startedOnce, setStartedOnce] = useState<0 | 1>(0);
-  const [startPressed, setStartPressed] = useState<0 | 1>(0);
   const [faultCount2, setFaultCount2] = useState(0);
   const [faultCount1, setFaultCount1] = useState(0);
 
@@ -33,7 +32,6 @@ export default function Page() {
         return next;
       });
       setStartedOnce(1);
-      setStartPressed(1);
     }, 1000);
     return () => clearInterval(id);
   }, [running]);
@@ -66,9 +64,9 @@ export default function Page() {
             <h2>Live Oracle</h2>
             <p style={{ color: '#cbd5e1' }}>Start/Stop/Reset para el muestreo de sensores alimentados con corriente y temperatura.</p>
             <div style={{ display: 'flex', gap: 12, marginTop: 12, flexWrap: 'wrap' }}>
-              <button onClick={() => { setRunning(true); setStartedOnce(1); setStartPressed(1); setFaultCount1((v) => v + 1); }} style={btn}>Start</button>
+              <button onClick={() => { setRunning(true); setStartedOnce(1); setFaultCount1((v) => v + 1); }} style={btn}>Start</button>
               <button onClick={() => { setRunning(false); }} style={btn}>Stop</button>
-              <button onClick={() => { setRunning(false); setTick(0); setReadings([]); setStartedOnce(0); setStartPressed(0); setFaultCount1(0); setFaultCount2(0); }} style={btn}>Reset</button>
+              <button onClick={() => { setRunning(false); setTick(0); setReadings([]); setStartedOnce(0); setFaultCount1(0); setFaultCount2(0); }} style={btn}>Reset</button>
             </div>
             <div style={{ marginTop: 20, display: 'grid', gap: 10 }}>
               <Info label="Estado" value={running ? 'Sampling sensors...' : 'Stopped'} />
