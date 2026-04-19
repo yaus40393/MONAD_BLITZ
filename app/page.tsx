@@ -98,7 +98,6 @@ export default function Page() {
             <h2>CONDITIONS</h2>
             <p style={{ color: '#cbd5e1' }}>El pago depende de Start, de las condiciones true y de los fallos detectados.</p>
             <div style={{ marginTop: 20, display: 'grid', gap: 10 }}>
-              <Info label="Start pressed" value={String(startPressed)} />
               <Info label="Check" value={String(sim2AllTrue ? 1 : 0)} />
               <Info label="Payment" value={paymentState} />
             </div>
