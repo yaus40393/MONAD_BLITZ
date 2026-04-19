@@ -39,7 +39,7 @@ export default function Page() {
   const setFlag = (key: keyof ClaimFlags, value: 0 | 1) => setClaimFlags((prev) => ({ ...prev, [key]: value }));
   const sim2AllTrue = Object.values(claimFlags).every((v) => v === 1) && startedOnce === 1;
   const paymentState = sim2AllTrue && (faultCount1 > 0 || faultCount2 > 0) ? 'PAGO EFECTUADO' : 'FALTA';
-  const faltaColor = (sim2AllTrue && faultCount2 > 0 && faultCount1 > 0) ? '#4ade80' : '#94a3b8';
+  const faltaColor = (sim2AllTrue && faultCount1 > 0) ? '#4ade80' : '#94a3b8';
 
   return (
     <main style={{ minHeight: '100vh', background: '#020617', color: '#e2e8f0', padding: 32, fontFamily: 'ui-sans-serif, system-ui' }}>
@@ -88,8 +88,7 @@ export default function Page() {
               <FlagRow label="claimId no procesado" value={claimFlags.claimIdFresh} onZero={() => setFlag('claimIdFresh', 0)} onOne={() => setFlag('claimIdFresh', 1)} />
             </div>
             <div style={{ marginTop: 16, display: 'grid', gap: 10 }}>
-              <Info label="Fallos simulación 2" value={String(faultCount2)} />
-              <button onClick={() => setFaultCount2((v) => v + 1)} style={btn}>Fallo</button>
+              <Info label="Fallos simulación 1" value={String(faultCount1)} />
             </div>
           </div>
 
