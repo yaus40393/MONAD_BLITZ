@@ -97,7 +97,6 @@ export default function Page() {
             <div style={{ marginTop: 20, display: 'grid', gap: 10 }}>
               <Info label="Start pressed" value={String(startPressed)} />
               <Info label="Check" value={String(allOk ? 1 : 0)} />
-              <Info label="Failed runs" value={String(startPressed === 1 ? 1 : 0)} />
             </div>
             <div style={{ marginTop: 18, padding: 16, borderRadius: 18, border: '1px solid #1e293b', background: '#020617' }}>
               <div style={{ color: (startPressed && allOk) ? '#4ade80' : '#94a3b8', fontWeight: 700, fontSize: 18 }}>{(startPressed && allOk) ? 'TRUE' : 'FALSE'}</div>
