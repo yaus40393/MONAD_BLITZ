@@ -99,7 +99,6 @@ export default function Page() {
             <p style={{ color: '#cbd5e1' }}>El pago depende de Start, de las condiciones true y de los fallos detectados.</p>
             <div style={{ marginTop: 20, display: 'grid', gap: 10 }}>
               <Info label="Check" value={String(sim2AllTrue ? 1 : 0)} />
-              <Info label="Payment" value={paymentState} />
             </div>
             <div style={{ marginTop: 18, padding: 16, borderRadius: 18, border: '1px solid #1e293b', background: '#020617' }}>
               <div style={{ color: paymentState === 'PAGO EFECTUADO' ? '#4ade80' : '#94a3b8', fontWeight: 700, fontSize: 18 }}>{paymentState}</div>
