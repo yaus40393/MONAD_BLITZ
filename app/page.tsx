@@ -110,7 +110,7 @@ export default function Page() {
 }
 
 function Info({ label, value }: { label: string; value: string }) { return <div style={mini}><div style={{ color: '#94a3b8' }}>{label}</div><div style={{ wordBreak: 'break-all', fontWeight: 600 }}>{value}</div></div>; }
-function ReadingRow({ reading }: { reading: Reading }) { const fault = parseFloat(reading.current) > 12 || parseFloat(reading.temperature) >= 70; return <div style={{ ...mini, borderColor: fault ? '#ef4444' : reading.status === 'spike' ? '#f59e0b' : '#1e293b' }}><b>t={reading.t}</b> · corriente {reading.current}A · temp {reading.temperature}°C {fault ? '· FALLA' : reading.status === 'spike' ? '· SPIKE' : ''}</div>; }
+function ReadingRow({ reading }: { reading: Reading }) { const fault = parseFloat(reading.current) > 12; return <div style={{ ...mini, borderColor: fault ? '#ef4444' : reading.status === 'spike' ? '#f59e0b' : '#1e293b' }}><b>t={reading.t}</b> · corriente {reading.current}A · temp {reading.temperature}°C {fault ? '· FALLA' : reading.status === 'spike' ? '· SPIKE' : ''}</div>; }
 function FlagRow({ label, value, onZero, onOne }: { label: string; value: 0 | 1; onZero: () => void; onOne: () => void; }) { return <div style={{ ...mini, display: 'grid', gap: 8 }}><div><b>{label}</b> · estado: {value}</div><div style={{ display: 'flex', gap: 8 }}><button onClick={onZero} style={btn}>0</button><button onClick={onOne} style={btn}>1</button></div></div>; }
 
 const box: React.CSSProperties = { border: '1px solid #1e293b', background: '#0f172a', borderRadius: 24, padding: 24 };
